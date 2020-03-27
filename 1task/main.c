@@ -2,6 +2,7 @@
 #include "vector.h"
 #include "int.h"
 #include "float.h"
+#include "complex.h"
 #include <assert.h>
 
 void test_int_add()
@@ -100,6 +101,77 @@ void test_float_scalar_multiply()
 	dtor(float_vec_1);
 }
 
+void test_complex_add()
+{
+	complex values1[] = {
+		{1.0, 0.0},
+		{2.0, 0.0},
+		{3.0, 0.0},
+	};
+	complex values2[] = {
+		{0.0, 3.0},
+		{0.0, 2.0},
+		{0.0, 1.0},
+	};
+	complex results[] = {
+		{1.0, 3.0},
+		{2.0, 2.0},
+		{3.0, 1.0},
+	};
+
+	vector* float_vec_1 = vector_complex_ctor(3, values1);
+	vector* float_vec_2 = vector_complex_ctor(3, values2);
+	
+	print(float_vec_1);
+	printf("+\n");
+	print(float_vec_2);
+	printf("=\n");
+
+	add(float_vec_1, float_vec_2);
+
+	print(float_vec_1);	
+	printf("\n");
+
+	for (int i=0; i<3; i++)
+	{
+		assert (((complex*)(get(float_vec_1, i)))->re == results[i].re);
+		assert (((complex*)(get(float_vec_1, i)))->im == results[i].im);
+	}
+	dtor(float_vec_1);
+	dtor(float_vec_2);
+}
+
+void test_complex_scalar_multiply()
+{	
+	complex scalar = {3.0, 0.0};
+	complex values1[] = {
+		{1.0, 3.0},
+		{2.0, 2.0},
+		{3.0, 1.0},
+	};
+	complex results[] = {
+		{3.0, 9.0},
+		{6.0, 6.0},
+		{9.0, 3.0},
+	};
+
+	vector* complex_vec_1 = vector_complex_ctor(3, values1);
+	
+	print(complex_vec_1);
+	printf("multiplying by 3\n");
+	assert (multiply_on_scalar(complex_vec_1, &scalar) != NULL);
+
+	print(complex_vec_1);	
+	printf("\n");
+
+	for (int i=0; i<3; i++)
+	{
+		assert (((complex*)(get(complex_vec_1, i)))->re == results[i].re);
+		assert (((complex*)(get(complex_vec_1, i)))->im == results[i].im);
+	}
+	dtor(complex_vec_1);
+}
+
 int main(int argc, char** argv)
 {
 	printf("Test 1: int add\n");
@@ -117,4 +189,12 @@ int main(int argc, char** argv)
 	printf("Test 4: float scalar multiply\n");
 	test_float_scalar_multiply();
 	printf("Test 4 OK\n\n\n");
+
+	printf("Test 5: complex add\n");
+	test_complex_add();
+	printf("Test 5 OK\n\n\n");
+
+	printf("Test 6: complex scalar multiply\n");
+	test_complex_scalar_multiply();
+	printf("Test 6 OK\n\n\n");
 }
