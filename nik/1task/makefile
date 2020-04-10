@@ -1,7 +1,7 @@
 all: build run
 
 build:
-	gcc -o matrix *.c
+	gcc -o matrix.out *.c
 
 run:
-	./matrix
+	./matrix.out
