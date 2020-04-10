@@ -1,2 +1,2 @@
 all:
-	gcc -o vector *.c
+	gcc -o vector.out *.c
