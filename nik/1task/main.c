@@ -134,6 +134,8 @@ matrix* read_matrix(config* cfg, char* message)
 		printf("wrong config! aborting\n");
 		exit(-1);
 	}
+
+	return matr;
 }
 
 void menu_add(config* cfg, matrix* left, matrix* right)
