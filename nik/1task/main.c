@@ -198,7 +198,7 @@ void menu_multiply_matrices(config* cfg, matrix* left, matrix* right)
 void menu_linear_combination(config* cfg, matrix* left)
 {
 	int target_line = 0;
-	printf("enter target line:");
+	printf("enter target line:\n");
 	scanf("%d", &target_line);
 
 	printf("enter coefficients, with any value on target line\n");
