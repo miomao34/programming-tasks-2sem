@@ -1,207 +1,299 @@
 #include <stdio.h>
+#include <stdbool.h>
+#include <stdlib.h>
 #include "matrix.h"
 #include "int.h"
 #include "float.h"
-#include <assert.h>
+#include "tests.h"
 
-#define GREEN "\033[1;32m"
-#define YELLOW "\033[1;33m"
-#define NO_COLOR "\033[0m"
-
-void test_int_add()
+enum TYPES
 {
-	printf("%sTEST: add int matrices\n%s", YELLOW, NO_COLOR);
-	
-	int values1[] = {1,2,3,4,5,6,7,8,9};
-	int values2[] = {10,11,12,13,14,15,16,17,18};
-	matrix* matr1 = matrix_int_create_instance(3, values1);
-	matrix* matr2 = matrix_int_create_instance(3, values2);
-	int results[] = {11,13,15,17,19,21,23,25,27};
+	INT,
+	FLOAT
+};
 
-	print(matr1);
-	printf("+\n");
-	print(matr2);
-	printf("=\n");
-
-	add(matr1, matr2);
-	print(matr1);
-
-	for (int i = 0; i < 9; i++)
-		assert (*(int*)get_as_array(matr1, i) == *(results + i));
-
-	printf("%sTEST OK%s\n\n", GREEN, NO_COLOR);	
-}
-
-void test_int_multiply_scalar()
+typedef struct _config
 {
-	printf("%sTEST: multiply int matrices on scalar\n%s", YELLOW, NO_COLOR);
-	
-	int values1[] = {1,2,3,4,5,6,7,8,9};
-	matrix* matr1 = matrix_int_create_instance(3, values1);
-	int results[] = {2,4,6,8,10,12,14,16,18};
+	int size;
+	int type;
+} config;
 
-	print(matr1);
-	printf("*\n2\n=\n");
-
-	int scalar = 2;
-	multiply_on_scalar(matr1, &scalar);
-	print(matr1);
-
-	for (int i = 0; i < 9; i++)
-		assert (*(int*)get_as_array(matr1, i) == *(results + i));
-
-	printf("%sTEST OK%s\n\n", GREEN, NO_COLOR);	
-}
-
-void test_int_multiply_matrices()
-{
-	printf("%sTEST: multiply int matrices\n%s", YELLOW, NO_COLOR);
-	
-	int values1[] = {1,2,3,4,5,6,7,8,9};
-	int values2[] = {9,8,7,6,5,4,3,2,1};
-	matrix* matr1 = matrix_int_create_instance(3, values1);
-	matrix* matr2 = matrix_int_create_instance(3, values2);
-	int results[] = {30,24,18,84,69,54,138,114,90};
-
-	print(matr1);
-	printf("+\n");
-	print(matr2);
-	printf("=\n");
-
-	multiply_matrices(matr1, matr2);
-	print(matr1);
-
-	for (int i = 0; i < 9; i++)
-		assert (*(int*)get_as_array(matr1, i) == *(results + i));
-
-	printf("%sTEST OK%s\n\n", GREEN, NO_COLOR);	
-}
-
-void test_int_linear_combination()
-{
-	printf("%sTEST: int matrix linear combination\n%s", YELLOW, NO_COLOR);
-	
-	int values1[] = {1,2,3,4,5,6,7,8,9};
-	matrix* matr1 = matrix_int_create_instance(3, values1);
-	int coef[] = {5,6,7};
-	int results[] = {1,2,3,58,71,84,7,8,9};
-
-	print(matr1);
-	printf("*\n");
-	printf("%d _ %d\n", coef[0], coef[2]);
-	printf("=\n");
-
-	linear_combination(matr1, 2, coef);
-	print(matr1);
-
-	for (int i = 0; i < 9; i++)
-		assert (*(int*)get_as_array(matr1, i) == *(results + i));
-
-	printf("%sTEST OK%s\n\n", GREEN, NO_COLOR);	
-}
-
-void test_float_add()
-{
-	printf("%sTEST: add float matrices\n%s", YELLOW, NO_COLOR);
-	
-	float values1[] = {1.0,2.0,3.0,4.0,5.0,6.0,7.0,8.0,9.0};
-	float values2[] = {10.0,11.0,12.0,13.0,14.0,15.0,16.0,17.0,18.0};
-	matrix* matr1 = matrix_float_create_instance(3, values1);
-	matrix* matr2 = matrix_float_create_instance(3, values2);
-	float results[] = {11.0,13.0,15.0,17.0,19.0,21.0,23.0,25.0,27.0};
-
-	print(matr1);
-	printf("+\n");
-	print(matr2);
-	printf("=\n");
-
-	add(matr1, matr2);
-	print(matr1);
-
-	for (int i = 0; i < 9; i++)
-		assert (*(float*)get_as_array(matr1, i) == *(results + i));
-
-	printf("%sTEST OK%s\n\n", GREEN, NO_COLOR);	
-}
-
-void test_float_multiply_scalar()
-{
-	printf("%sTEST: multiply float matrices on scalar\n%s", YELLOW, NO_COLOR);
-	
-	float values1[] = {1.0,2.0,3.0,4.0,5.0,6.0,7.0,8.0,9.0};
-	matrix* matr1 = matrix_float_create_instance(3, values1);
-	float results[] = {2.0,4.0,6.0,8.0,10.0,12.0,14.0,16.0,18.0};
-
-	print(matr1);
-	printf("*\n2\n=\n");
-
-	float scalar = 2;
-	multiply_on_scalar(matr1, &scalar);
-	print(matr1);
-
-	for (int i = 0; i < 9; i++)
-		assert (*(float*)get_as_array(matr1, i) == *(results + i));
-
-	printf("%sTEST OK%s\n\n", GREEN, NO_COLOR);	
-}
-
-void test_float_multiply_matrices()
-{
-	printf("%sTEST: multiply float matrices\n%s", YELLOW, NO_COLOR);
-	
-	float values1[] = {1.0,2.0,3.0,4.0,5.0,6.0,7.0,8.0,9.0};
-	float values2[] = {9.0,8.0,7.0,6.0,5.0,4.0,3.0,2.0,1.0};
-	matrix* matr1 = matrix_float_create_instance(3, values1);
-	matrix* matr2 = matrix_float_create_instance(3, values2);
-	float results[] = {30.0,24.0,18.0,84.0,69.0,54.0,138.0,114.0,90.0};
-
-	print(matr1);
-	printf("+\n");
-	print(matr2);
-	printf("=\n");
-
-	multiply_matrices(matr1, matr2);
-	print(matr1);
-
-	for (int i = 0; i < 9; i++)
-		assert (*(float*)get_as_array(matr1, i) == *(results + i));
-
-	printf("%sTEST OK%s\n\n", GREEN, NO_COLOR);	
-}
-
-void test_float_linear_combination()
-{
-	printf("%sTEST: float matrix linear combination\n%s", YELLOW, NO_COLOR);
-	
-	float values1[] = {1.0,2.0,3.0,4.0,5.0,6.0,7.0,8.0,9.0};
-	matrix* matr1 = matrix_float_create_instance(3, values1);
-	float coef[] = {5.0,6.0,7.0};
-	float results[] = {1.0,2.0,3.0,58.0,71.0,84.0,7.0,8.0,9.0};
-
-	print(matr1);
-	printf("*\n");
-	printf("%f _ %f\n", coef[0], coef[2]);
-	printf("=\n");
-
-	linear_combination(matr1, 2, coef);
-	print(matr1);
-
-	for (int i = 0; i < 9; i++)
-		assert (*(float*)get_as_array(matr1, i) == *(results + i));
-
-	printf("%sTEST OK%s\n\n", GREEN, NO_COLOR);	
-}
-
-
-int main(int argc, char** argv)
+void tests()
 {
 	test_int_add();
+	test_int_add_negative();
+	
 	test_int_multiply_scalar();
+	test_int_multiply_scalar_negative();
+	
 	test_int_multiply_matrices();
+	test_int_multiply_matrices_negative();
+	
 	test_int_linear_combination();
+	test_int_linear_combination_negative();
+
 
 	test_float_add();
+	test_float_add_negative();
+
 	test_float_multiply_scalar();
+	test_float_multiply_scalar_negative();
+	
 	test_float_multiply_matrices();
+	test_float_multiply_matrices_negative();
+	
 	test_float_linear_combination();
+	test_float_linear_combination_negative();
+}
+
+void initial_menu()
+{
+	int option = 0;
+	while (true)
+	{
+		printf("choose an option:\n\
+		[0] enter operations menu\n\
+		[1] run tests\n\
+		[2] exit\n");
+
+		scanf("%d", &option);
+		switch(option)
+		{
+		case 0:
+			return;
+		case 1:
+			tests();
+		case 2:
+			exit(0);
+		
+		default:
+			printf("wrong option\n");
+			continue;
+		}
+	}
+}
+
+config* read_config()
+{
+	config* cfg = calloc(sizeof(config), 1);
+	int option = 0;
+	while (true)
+	{
+		printf("enter type:\n\
+		[%d] int\n\
+		[%d] float\n", INT, FLOAT);
+
+		scanf("%d", &option);
+		switch(option)
+		{
+		case INT:
+			cfg->type = INT;
+			break;
+		case FLOAT:
+			cfg->type = FLOAT;
+			break;
+		
+		default:
+			printf("wrong type\n");
+			continue;
+		}
+		break;
+	}
+	
+	printf("enter matrix size:\n");
+	scanf("%d", &(cfg->size));
+
+	return cfg;
+}
+
+matrix* read_matrix(config* cfg, char* message)
+{
+	printf("%s", message);
+
+	void* values = NULL;
+	matrix* matr = NULL;
+	switch (cfg->type)
+	{
+	case INT:
+		values = calloc(cfg->size*cfg->size, sizeof(int));
+		for (int i = 0; i < cfg->size*cfg->size; i++)
+			scanf("%d", (int*)(values + i*sizeof(int)));
+		
+		matr = matrix_int_create_instance(cfg->size, values);
+		break;
+
+	case FLOAT:
+		values = calloc(cfg->size*cfg->size, sizeof(float));
+		for (int i = 0; i < cfg->size*cfg->size; i++)
+			scanf("%f", (float*)(values + i*sizeof(float)));
+		
+		matr = matrix_float_create_instance(cfg->size, values);
+		break;
+	
+	default:
+		printf("wrong config! aborting\n");
+		exit(-1);
+	}
+}
+
+void menu_add(config* cfg, matrix* left, matrix* right)
+{
+	print(left);
+	printf("+\n");
+	print(right);
+	printf("=\n");
+
+	add(left, right);
+	print(left);
+}
+
+void menu_multiply_scalar(config* cfg, matrix* left)
+{
+	printf("enter scalar:\n");
+
+	void* scalar = NULL;
+	switch(cfg->type)
+	{
+	case INT:
+		scalar = calloc(1, sizeof(int));
+		scanf("%d", (int*)scalar);
+		break;
+
+	case FLOAT:
+		scalar = calloc(1, sizeof(float));
+		scanf("%f", (float*)scalar);
+		break;
+
+	default:
+		printf("wrong config! aborting\n");
+		exit(-1);
+	}
+
+	print(left);
+	printf("*\n");
+	if (cfg->type == INT)
+		printf("%d\n", *((int*)scalar));
+	else
+		printf("%f\n", *((float*)scalar));
+	// printf(cfg->type == INT ? "%d\n", *((int*)scalar) : "%f\n", *((float*)scalar));
+	printf("=\n");
+
+	multiply_on_scalar(left, scalar);
+	print(left);
+}
+
+void menu_multiply_matrices(config* cfg, matrix* left, matrix* right)
+{
+	print(left);
+	printf("*\n");
+	print(right);
+	printf("=\n");
+
+	multiply_matrices(left, right);
+	print(left);
+}
+
+void menu_linear_combination(config* cfg, matrix* left)
+{
+	int target_line = 0;
+	printf("enter target line:");
+	scanf("%d", &target_line);
+
+	printf("enter coefficients, with any value on target line\n");
+
+	void* coef = NULL;
+	matrix* matr = NULL;
+	switch (cfg->type)
+	{
+	case INT:
+		coef = calloc(cfg->size, sizeof(int));
+		for (int i = 0; i < cfg->size; i++)
+			scanf("%d", (int*)(coef + i*sizeof(int)));
+		break;
+
+	case FLOAT:
+		coef = calloc(cfg->size, sizeof(float));
+		for (int i = 0; i < cfg->size; i++)
+			scanf("%f", (float*)(coef + i*sizeof(float)));
+		break;
+	
+	default:
+		printf("wrong config! aborting\n");
+		exit(-1);
+	}
+
+	print(left);
+	printf("*\n");
+	if (cfg->type == INT)
+		printf("%d _ %d\n", *((int*)coef), *((int*)(coef + 2*sizeof(int))));
+	else
+		printf("%f _ %f\n", *((float*)coef), *((float*)(coef + 2*sizeof(float))));
+	printf("=\n");
+
+	linear_combination(left, target_line, coef);
+	print(left);	
+}
+
+void menu(config* cfg, matrix* left, matrix* right)
+{
+	int option = 0;
+	while (true)
+	{
+		printf("choose an operation:\n\
+		[0] re-enter the config and matrices\n\
+		[1] re-enter the matrices\n\
+		[2] add the first matrix to the second\n\
+		[3] multiply the first matrix on scalar\n\
+		[4] multiply the first matrix on the second\n\
+		[5] linear combination of the first matrix\n\
+		[6] print matrices\n\
+		[7] exit\n");
+
+		scanf("%d", &option);
+		switch(option)
+		{
+		case 0:
+			cfg = read_config();
+		case 1:
+			left =  read_matrix(cfg, "enter first matrix\n");
+			right = read_matrix(cfg, "enter second matrix\n");
+			break;
+		case 2:
+			menu_add(cfg, left, right);
+			break;
+		case 3:
+			menu_multiply_scalar(cfg, left);
+			break;
+		case 4:
+			menu_multiply_matrices(cfg, left, right);
+			break;
+		case 5:
+			menu_linear_combination(cfg, left);
+			break;
+		case 6:
+			printf("first:\n");
+			print(left);
+			printf("second:\n");
+			print(right);
+			break;
+		case 7:
+			return;
+		
+		default:
+			printf("wrong operation\n");
+			continue;
+		}
+	}
+}
+
+int main(int argc, char* argv[])
+{
+	initial_menu();
+	config* cfg = read_config();
+	// printf("%d %d\n", cfg->size, cfg->type);
+
+	matrix* matr1 = read_matrix(cfg, "enter first matrix\n");
+	matrix* matr2 = read_matrix(cfg, "enter second matrix\n");
+
+	menu(cfg, matr1, matr2);
 }

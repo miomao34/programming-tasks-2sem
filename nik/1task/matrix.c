@@ -21,8 +21,10 @@ matrix* common_create_instance(
 	
 	this->size = size;
 	this->elem_size = elem_size;
+
 	this->elem_zero = calloc(1, elem_size);
 	memcpy(this->elem_zero, (const void *) zero, elem_size);
+	
 	this->values = calloc(size * size, elem_size);
 	if (values != NULL)
 		memcpy(this->values, (const void *) values, elem_size * size * size);
@@ -84,6 +86,7 @@ matrix* add(matrix* left, matrix* right)
 	
 	for (int i=0; i < left->size*left->size; i++)
 		left->add(get_as_array(left, i), get_as_array(right, i));
+
 	return left;
 }
 
@@ -128,6 +131,9 @@ matrix* multiply_matrices(matrix* left, matrix* right)
 	free(mul_value);
 
 	memcpy(left->values, matr->values, matr->size * matr->size * matr->elem_size);
+	free(matr->values);
+	free(matr->elem_zero);
+	free(matr);
 	return left;	
 }
 
@@ -145,15 +151,11 @@ matrix* linear_combination(matrix* matr, int target_line, void* coefficients)
 			memcpy(mul_value, matr->elem_zero, matr->elem_size);
 
 			matr->add(mul_value, (coefficients + (i-1)*matr->elem_size));
-			// printf("\n");
-			// matr->print(mul_value);
-			// printf("\n");
 			matr->multiply(mul_value, get(matr, i, j));
 			matr->add(get(matr, target_line, j), mul_value);
-
-			// print(matr);
-            // value = matr->Sum(Get(matr, TargetLine, i), matr->Multiplication(Get(matr, j, i), (coefficients + (i-1))));
         }
     }
+
+	free(mul_value);
     return matr;
 }
