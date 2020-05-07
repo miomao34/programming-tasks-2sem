@@ -2,6 +2,8 @@
 #include "complex.hpp"
 #include <stdexcept>
 
+using namespace std;
+
 template<typename T>
 Node<T>::Node(T value)
 {
@@ -11,7 +13,7 @@ Node<T>::Node(T value)
 template<typename T>
 Node<T>::~Node()
 {
-	this->next = NULL;
+	// this->next = NULL;
 }
 
 template<typename T>
@@ -30,7 +32,7 @@ template<typename T>
 void Node<T>::SetNext(Node<T>* next)
 {
 	if (next == NULL)
-		throw std::runtime_error("cannot set next: next is NULL");
+		throw runtime_error("SetNext: cannot set next - next is NULL");
 		
 	this->next = next;
 }
@@ -38,17 +40,17 @@ void Node<T>::SetNext(Node<T>* next)
 template<typename T>
 Node<T>* Node<T>::GetNext()
 {
-	// std::cout << "get next for val " << this->data << '\n';
 	if (this->next == NULL)
-		throw std::runtime_error("cannot get next: next is NULL");
-		
+		throw runtime_error("GetNext: cannot get next - next is NULL");
+
 	return this->next;
 }
 
 template<typename T>
 void Node<T>::Dump()
 {
-	std::cout << this->data << "->";
+	// cout << '[' << this->data << ':' << this->next << ']' << "->";
+	cout << this->data << "->";
 }
 
 
@@ -96,7 +98,7 @@ template<typename T>
 T CircularList<T>::GetCurrentValue()
 {
 	if (!this->Validate())
-		throw std::runtime_error("GetCurrentValue: validation failed");
+		throw runtime_error("GetCurrentValue: validation failed");
 	
 	return this->Current->GetValue();
 }
@@ -110,6 +112,9 @@ Node<T>* CircularList<T>::GetCurrent()
 template<typename T>
 Node<T>* CircularList<T>::Add(T value)
 {
+	if (!this->Validate())
+		throw runtime_error("Add: validation failed");
+
 	if (this->Current == NULL && this->Head == NULL)
 	{
 		this->Head = this->Current = new Node<T>(value);
@@ -117,9 +122,6 @@ Node<T>* CircularList<T>::Add(T value)
 
 		return this->Current;
 	}
-
-	if (!this->Validate())
-		throw std::runtime_error("Add: validation failed");
 	
 	Node<T>* next = this->GetCurrent()->GetNext();
 	Node<T>* node = new Node<T>(value);
@@ -133,8 +135,11 @@ Node<T>* CircularList<T>::Add(T value)
 template<typename T>
 Node<T>* CircularList<T>::GoNext()
 {
+	if (this->Current == NULL && this->Head == NULL)
+		return NULL;
+
 	if (!this->Validate())
-		throw std::runtime_error("GoNext: validation failed");
+		throw runtime_error("GoNext: validation failed");
 
 	this->Current = this->Current->GetNext();
 }
@@ -143,45 +148,50 @@ template<typename T>
 void CircularList<T>::RemoveNext()
 {
 	if (!this->Validate())
-		throw std::runtime_error("RemoveNext: validation failed");
+		throw runtime_error("RemoveNext: validation failed");
 
-	if(this->Head == this->Current && this->Head->GetNext() == this->Head)
+	if (this->Current == NULL && this->Head == NULL)
+		throw runtime_error("RemoveNext: stack is empty");
+
+	if (this->Head->GetNext() == this->Head)
 	{
-		this->Head->~Node();
-		this->Head = this->Current = NULL;
+		this->Current->~Node();
+		this->Current = this->Head = NULL;
 		return;
 	}
 	
-	Node<T>* new_next1 = this->Current->GetNext();
-	Node<T>* new_next2 = new_next1->GetNext();
+	Node<T>* new_next = this->Current->GetNext()->GetNext();
+	// cout << new_next << " : " << this->Head << " : " << this->Current->GetNext() << '\n';
+	if (this->Current->GetNext() == this->Head)
+		this->Head = this->Head->GetNext();
 	this->Current->GetNext()->~Node();
-	this->Current->SetNext(new_next2);
+	this->Current->SetNext(new_next);
 }
 
 template<typename T>
 void CircularList<T>::Dump()
 {
+	if (!this->Validate())
+		throw runtime_error("Dump: validation failed");
+
 	if (this->Head == NULL && this->Current == NULL)
 	{
-		std::cout << "[NULL]\n";
+		cout << "[NULL]\n";
 		return;
 	}
-
-	if (!this->Validate())
-		throw std::runtime_error("Dump: validation failed");
 	
 	Node<T>* curr = this->Head;
 
 	while(true)
 	{
-		// std::cout << "while in\n";
+		// cout << "while in\n";
 		curr->Dump();
-		// std::cout << curr->GetValue() << " this: " << curr << " next: " << curr->GetNext() << '\n';
+		// cout << curr->GetValue() << " this: " << curr << " next: " << curr->GetNext() << '\n';
 		curr = curr->GetNext();
 		if (curr == this->Head)
 			break;
 	}
-	std::cout << "[head]\n";
+	cout << "[head]\n";
 }
 
 
@@ -193,5 +203,5 @@ template class Node<double>;
 template class CircularList<double>;
 template class Node<Complex>;
 template class CircularList<Complex>;
-template class Node<std::string>;
-template class CircularList<std::string>;
+template class Node<string>;
+template class CircularList<string>;

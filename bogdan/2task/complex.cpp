@@ -1,5 +1,7 @@
 #include "complex.hpp"
 
+using namespace std;
+
 Complex::Complex()
 {
 	this->real = 0;
@@ -12,7 +14,7 @@ Complex::Complex(double real, double imag)
 	this->imag = imag;
 }
 
-std::ostream& operator<<(std::ostream& os, const Complex& complex)
+ostream& operator<<(ostream& os, const Complex& complex)
 {
     os << '{' << complex.real << ", " << complex.imag << '}';
     return os;
