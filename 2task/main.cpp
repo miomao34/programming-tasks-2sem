@@ -9,9 +9,9 @@ int main()
 	
 	stacker.Dump();
 
-	Hanoi hanoi(5);
+	Hanoi hanoi(3);
 
-	hanoi.Solve();
+	hanoi.SolveProcedural();
 
 	// hanoi.Dump();
 

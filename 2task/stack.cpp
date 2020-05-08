@@ -1,4 +1,5 @@
 #include "stack.hpp"
+#include <stdexcept>
 
 template<typename T>
 Stack<T>::Stack()
@@ -32,7 +33,7 @@ template<typename T>
 T Stack<T>::Pop()
 {
 	if (this->current == -1)
-		throw "stack is empty!";
+		throw std::runtime_error("stack is empty!");
 		
 	return this->data[this->current--];
 }
@@ -41,10 +42,10 @@ template<typename T>
 T Stack<T>::Peek(int i)
 {
 	if (this->current == -1)
-		throw "stack is empty!";
+		throw std::runtime_error("stack is empty!");
 
 	if (this->current - i < 0 || i < 0)
-		throw "trying to access invalid item";
+		throw std::runtime_error("trying to access invalid item");
 		
 	return this->data[this->current - i];
 }
@@ -63,14 +64,14 @@ Stack<T>& operator<< (Stack<T>& stack, T value)
 	return stack;
 }
 
-template<class _T>
-void operator<< (Stack<_T>& left, Stack<_T>& right)
+template<typename T>
+void operator<< (Stack<T>& left, Stack<T>& right)
 {
 	left.Push(right.Pop());
 }
 
-template<class _T>
-void operator>> (Stack<_T>& left, Stack<_T>& right)
+template<typename T>
+void operator>> (Stack<T>& left, Stack<T>& right)
 {
 	right.Push(left.Pop());
 }

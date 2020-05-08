@@ -11,7 +11,8 @@ public:
 	Hanoi(uint size);
 	~Hanoi();
 
-	void Solve();
+	void SolveProcedural();
+	void SolveDetermined();
 	void Move(uint from, uint to);
 	void Validate();
 	void Dump();
