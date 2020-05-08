@@ -95,7 +95,7 @@ void Hanoi::SolveProcedural()
 
 void Hanoi::Move(uint from, uint to)
 {
-	if(this->rods[from].Peek() >= this->rods[to].Peek())
+	if(this->rods[from].GetCurrent() > -1 && this->rods[to].GetCurrent() > -1 && this->rods[from].Peek() >= this->rods[to].Peek())
 		throw std::runtime_error("hanoi: invalid move!");
 	// this->rods[to].Push(this->rods[from].Pop());
 	this->rods[from] >> this->rods[to];
