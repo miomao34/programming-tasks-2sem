@@ -1,75 +1,86 @@
-#include "list.hpp"
+#include "queue.hpp"
 #include "complex.hpp"
 
 using namespace std;
 
 int main()
 {
-	double value, value2 = 0;
-	string str = "";
-	int number_of_nodes = 0;
+	int number = 0;
 
-	CircularList<int> list = CircularList<int>();
-
-	cout << "int tests:\nenter number of nodes:\n";
-	cin >> number_of_nodes;
-	cout << "enter nodes:\n";
-	for (int i = 0; i < number_of_nodes; i++)
+	Queue<int> queue_i;
+	int value_i = 0;
+	cout << "int: enter number of nodes:\n";
+	cin >> number;
+	cout << "enter values:\n";
+	for (int i = 0; i < number; i++)
 	{
-		cin >> value;
-		list.Add(value);
+		cin >> value_i;
+		queue_i.Push(value_i);
 	}
 
-	list.Dump();
-	list.GoNext();
+	queue_i.Dump();
 
-	cout << "enter number of nodes to delete after head:\n";
-	cin >> number_of_nodes;
-	for (int i = 0; i < number_of_nodes; i++)
-		list.RemoveNext();
+	cout << "output:\n";
+	for (int i = 0; i < number; i++)
+		cout << queue_i.Pop() << '\n';
 
-	list.Dump();
 
-	CircularList<Complex> list2 = CircularList<Complex>();
 
-	cout << "complex tests:\nenter number of nodes:\n";
-	cin >> number_of_nodes;
-	cout << "enter nodes(2 numbers - 1 node):\n";
-	for (int i = 0; i < number_of_nodes; i++)
+	Queue<double> queue_d;
+	double value_d = 0;
+	cout << "double: enter number of nodes:\n";
+	cin >> number;
+	cout << "enter values:\n";
+	for (int i = 0; i < number; i++)
 	{
-		cin >> value >> value2;
-		list2.Add(Complex(value, value2));
+		cin >> value_d;
+		queue_d.Push(value_d);
 	}
 
-	list2.Dump();
-	list2.GoNext();
+	queue_d.Dump();
 
-	cout << "enter number of nodes to delete after head:\n";
-	cin >> number_of_nodes;
-	for (int i = 0; i < number_of_nodes; i++)
-		list2.RemoveNext();
+	cout << "output:\n";
+	for (int i = 0; i < number; i++)
+		cout << queue_d.Pop() << '\n';
 
-	list2.Dump();
 
-	CircularList<std::string> list3 = CircularList<std::string>();
 
-	cout << "string tests:\nenter number of nodes:\n";
-	cin >> number_of_nodes;
-	cout << "enter nodes:\n";
-	for (int i = 0; i < number_of_nodes; i++)
+	Queue<string> queue_s;
+	string value_s = "";
+	cout << "string: enter number of nodes:\n";
+	cin >> number;
+	cout << "enter values:\n";
+	for (int i = 0; i < number; i++)
 	{
-		cin >> str;
-		list3.Add(str);
+		cin >> value_s;
+		queue_s.Push(value_s);
 	}
 
-	list3.Dump();
+	queue_s.Dump();
 
-	list3.GoNext();
+	cout << "output:\n";
+	for (int i = 0; i < number; i++)
+		cout << queue_s.Pop() << '\n';
 
-	cout << "enter number of nodes to delete after head:\n";
-	cin >> number_of_nodes;
-	for (int i = 0; i < number_of_nodes; i++)
-		list3.RemoveNext();
-	
-	list3.Dump();
+
+
+	Queue<Complex> queue_c;
+	double value1, value2 = 0;
+	cout << "complex: enter number of nodes:\n";
+	cin >> number;
+	cout << "enter values:\n";
+	for (int i = 0; i < number; i++)
+	{
+		cin >> value1 >> value2;
+		queue_c.Push(Complex(value1, value2));
+	}
+
+	queue_c.Dump();
+
+	cout << "output:\n";
+	for (int i = 0; i < number; i++)
+		cout << queue_c.Pop() << '\n';
+
 }
+
+// HERE WE FUCKING GO

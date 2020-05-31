@@ -1,6 +1,7 @@
+#include <stdexcept>
+
 #include "list.hpp"
 #include "complex.hpp"
-#include <stdexcept>
 
 using namespace std;
 
@@ -13,7 +14,8 @@ Node<T>::Node(T value)
 template<typename T>
 Node<T>::~Node()
 {
-	// this->next = NULL;
+	this->next = NULL;
+	this->prev = NULL;
 }
 
 template<typename T>
@@ -30,157 +32,196 @@ T Node<T>::GetValue()
 
 template<typename T>
 void Node<T>::SetNext(Node<T>* next)
-{
-	if (next == NULL)
-		throw runtime_error("SetNext: cannot set next - next is NULL");
-		
+{		
 	this->next = next;
+}
+
+template<typename T>
+void Node<T>::SetPrev(Node<T>* prev)
+{
+	this->prev = prev;
 }
 
 template<typename T>
 Node<T>* Node<T>::GetNext()
 {
-	if (this->next == NULL)
-		throw runtime_error("GetNext: cannot get next - next is NULL");
-
 	return this->next;
+}
+
+template<typename T>
+Node<T>* Node<T>::GetPrev()
+{
+	return this->prev;
 }
 
 template<typename T>
 void Node<T>::Dump()
 {
 	// cout << '[' << this->data << ':' << this->next << ']' << "->";
-	cout << this->data << "->";
+	// cout << this->data << "->";
+	if (this->prev != NULL)
+		cout << "<";
+	cout << this->data;
+	if (this->next != NULL)
+		cout << ">";
 }
 
 
 template<typename T>
-CircularList<T>::CircularList()
+DLList<T>::DLList()
 {
-	this->Head = NULL;
-	this->Current = NULL;
+	this->First = NULL;
+	this->Last = NULL;
 }
 
 template<typename T>
-CircularList<T>::CircularList(T head_value)
+DLList<T>::DLList(T first_value)
 {
-	this->Head = new Node<T>(head_value);
-	this->Current = this->Head;
-	this->Head->SetNext(this->Head);
+	this->First = new Node<T>(first_value);
+	this->Last = this->First;
 }
 
 template<typename T>
-bool CircularList<T>::Validate()
-{
-	if (this->Head == NULL && this->Current == NULL)
-		return true;
+Node<T>* DLList<T>::GetFirst()
+{	
+	return this->First;
+}
 
-	if (this->Head->GetNext() == this->Head && this->GetCurrent() == this->Head)
-		return true;
+template<typename T>
+Node<T>* DLList<T>::GetLast()
+{	
+	return this->Last;
+}
+
+template<typename T>
+Node<T>* DLList<T>::Append(T value)
+{
+	if (!this->Validate())
+		throw runtime_error("Append: validation failed");
 	
-	Node<T>* test_current = this->Head->GetNext();
-	int nodes_left = MAX_NODES_IN_LIST;
-
-	while (true)
+	if (this->Last == NULL)
 	{
-		if (test_current == this->Head)
-			break;
-		if (test_current->GetNext() == NULL || nodes_left <= 0)
-			return false;
-
-		nodes_left--;
-		test_current = test_current->GetNext()	;
+		this->Last = this->First = new Node<T>(value);
+		return this->First;
 	}
+
+	this->Last->SetNext(new Node<T>(value));
+	this->Last->GetNext()->SetPrev(this->Last);
+	this->Last = this->Last->GetNext();
+
+	return this->Last;
+}
+
+template<typename T>
+Node<T>* DLList<T>::Prepend(T value)
+{
+	if (!this->Validate())
+		throw runtime_error("Prepend: validation failed");
+	
+	if (this->First == NULL)
+	{
+		this->First = this->Last = new Node<T>(value);
+		return this->Last;
+	}
+	this->First->SetPrev(new Node<T>(value));
+	this->First->GetPrev()->SetNext(this->First);
+	this->First = this->First->GetPrev();
+
+	return this->First;
+}
+
+template<typename T>
+void DLList<T>::RemoveFirst()
+{
+	if (!this->Validate())
+		throw runtime_error("RemoveFirst: validation failed");
+
+	if (this->First == NULL)
+		throw runtime_error("RemoveFirst: removing nodes from empty list");
+
+	if (this->First->GetNext() == NULL)
+	{
+		this->First->~Node();
+		this->First = NULL;
+		this->Last = NULL;
+		return;
+	}
+
+	this->First = this->First->GetNext();
+	this->First->GetPrev()->~Node();
+	this->First->SetPrev(NULL);
+}
+
+template<typename T>
+void DLList<T>::RemoveLast()
+{
+	if (!this->Validate())
+		throw runtime_error("RemoveLast: validation failed");
+
+	if (this->Last == NULL)
+		throw runtime_error("RemoveLast: removing nodes from empty list");
+
+	if (this->Last->GetPrev() == NULL)
+	{
+		this->Last->~Node();
+		this->Last = NULL;
+		this->First = NULL;
+		return;
+	}
+
+	this->Last = this->Last->GetPrev();
+	this->Last->GetNext()->~Node();
+	this->Last->SetNext(NULL);
+}
+
+template<typename T>
+bool DLList<T>::Validate()
+{
+	if (this->First == NULL && this->Last == NULL)
+		return true;
+
+	Node<T>* cursor  = this->First;
+	int counter = 0;
+
+	while (cursor != this->Last && counter < MAX_NODES_IN_LIST)
+	{
+		if (cursor == NULL)
+			return false;
+		cursor = cursor->GetNext();
+		counter++;
+	}
+
+	if (cursor != this->Last)
+		return false;
+
+	counter = 0;
+	while (cursor != this->First && counter < MAX_NODES_IN_LIST)
+	{
+		if (cursor == NULL)
+			return false;
+		cursor = cursor->GetPrev();
+		counter++;
+	}
+
+	if (cursor != this->First)
+		return false;
+
 	return true;
 }
 
 template<typename T>
-T CircularList<T>::GetCurrentValue()
-{
-	if (!this->Validate())
-		throw runtime_error("GetCurrentValue: validation failed");
-	
-	return this->Current->GetValue();
-}
-
-template<typename T>
-Node<T>* CircularList<T>::GetCurrent()
-{	
-	return this->Current;
-}
-
-template<typename T>
-Node<T>* CircularList<T>::Add(T value)
-{
-	if (!this->Validate())
-		throw runtime_error("Add: validation failed");
-
-	if (this->Current == NULL && this->Head == NULL)
-	{
-		this->Head = this->Current = new Node<T>(value);
-		this->Current->SetNext(this->Current);
-
-		return this->Current;
-	}
-	
-	Node<T>* next = this->GetCurrent()->GetNext();
-	Node<T>* node = new Node<T>(value);
-	node->SetNext(next);
-	this->GetCurrent()->SetNext(node);
-	this->GoNext();
-
-	return node;
-}
-
-template<typename T>
-Node<T>* CircularList<T>::GoNext()
-{
-	if (this->Current == NULL && this->Head == NULL)
-		return NULL;
-
-	if (!this->Validate())
-		throw runtime_error("GoNext: validation failed");
-
-	this->Current = this->Current->GetNext();
-}
-
-template<typename T>
-void CircularList<T>::RemoveNext()
-{
-	if (!this->Validate())
-		throw runtime_error("RemoveNext: validation failed");
-
-	if (this->Current == NULL && this->Head == NULL)
-		throw runtime_error("RemoveNext: stack is empty");
-
-	if (this->Head->GetNext() == this->Head)
-	{
-		this->Current->~Node();
-		this->Current = this->Head = NULL;
-		return;
-	}
-	
-	Node<T>* new_next = this->Current->GetNext()->GetNext();
-	// cout << new_next << " : " << this->Head << " : " << this->Current->GetNext() << '\n';
-	if (this->Current->GetNext() == this->Head)
-		this->Head = this->Head->GetNext();
-	this->Current->GetNext()->~Node();
-	this->Current->SetNext(new_next);
-}
-
-template<typename T>
-void CircularList<T>::Dump()
+void DLList<T>::Dump()
 {
 	if (!this->Validate())
 		throw runtime_error("Dump: validation failed");
 
-	if (this->Head == NULL && this->Current == NULL)
+	if (this->First == NULL && this->Last == NULL)
 	{
 		cout << "[NULL]\n";
 		return;
 	}
 	
-	Node<T>* curr = this->Head;
+	Node<T>* curr = this->First;
 
 	while(true)
 	{
@@ -188,20 +229,22 @@ void CircularList<T>::Dump()
 		curr->Dump();
 		// cout << curr->GetValue() << " this: " << curr << " next: " << curr->GetNext() << '\n';
 		curr = curr->GetNext();
-		if (curr == this->Head)
+		if (curr == this->Last || curr == NULL)
 			break;
 	}
-	cout << "[head]\n";
+	if (curr != NULL)
+		curr->Dump();
+	cout << "\n";
 }
 
 
 
 // instantiation
 template class Node<int>;
-template class CircularList<int>;
+template class DLList<int>;
 template class Node<double>;
-template class CircularList<double>;
+template class DLList<double>;
 template class Node<Complex>;
-template class CircularList<Complex>;
+template class DLList<Complex>;
 template class Node<string>;
-template class CircularList<string>;
+template class DLList<string>;

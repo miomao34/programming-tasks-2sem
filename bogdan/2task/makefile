@@ -1,2 +1,2 @@
 all:
-	g++ list.cpp complex.cpp main.cpp -o list
+	g++ complex.cpp list.cpp queue.cpp main.cpp -o queue

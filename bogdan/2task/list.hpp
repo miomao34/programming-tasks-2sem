@@ -10,35 +10,46 @@ class Node
 private:
 	T data;
 	Node* next;
+	Node* prev;
 public:
 	Node(T value);
 	~Node();
 	
 	void SetValue(T item);
 	T GetValue();
-	void SetNext(Node<T>* node);
+	void SetNext(Node<T>* next);
+	void SetPrev(Node<T>* prev);
 	Node<T>* GetNext();
+	Node<T>* GetPrev();
 	
 	void Dump();
 };
 
 template<typename T>
-class CircularList
+class DLList
 {
 private:
-	Node<T>* Head;
-	Node<T>* Current;
+	Node<T>* First;
+	Node<T>* Last;
+	// Node<T>* Current;
 public:
-	CircularList();
-	CircularList(T head_value);
-	// ~CircularList();
+	DLList();
+	DLList(T head_value);
+	// ~DLList();
 	
 	bool Validate();
-	T	GetCurrentValue();
-	Node<T>* GetCurrent();
-	Node<T>* Add(T item);
-	Node<T>* GoNext();
-	void RemoveNext();
+	// Node<T>* GetCurrent();
+	Node<T>* GetFirst();
+	Node<T>* GetLast();
+	Node<T>* Append(T item);
+	Node<T>* Prepend(T item);
+	// Node<T>* AddAfterCurrent(T item);
+	// Node<T>* AddBeforeCurrent(T item);
+	// Node<T>* GoNext();
+	// Node<T>* GoPrev();
+	// void RemoveCurrent();
+	void RemoveFirst();
+	void RemoveLast();
 	
 	void Dump();
 };
